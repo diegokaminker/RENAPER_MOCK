@@ -125,7 +125,16 @@ gcloud run deploy renaper-mock \
   --source . \
   --region YOUR_REGION \
   --allow-unauthenticated \
+  --max-instances=1 \
   --set-env-vars MOCK_USER=mock_user,MOCK_PASS=mock_pass
+```
+
+The live service is capped at **one instance** (`maxScale: 1`), which limits cost and keeps behavior predictable for a demo mock.
+
+To update an existing service:
+
+```bash
+gcloud run services update renaper-mock --region=us-central1 --max-instances=1
 ```
 
 Point your client `url` to:

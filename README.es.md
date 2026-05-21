@@ -219,6 +219,25 @@ RENAPER_BASE_URL=https://su-servicio.run.app pytest tests/test_search.py -v
 
 ---
 
-## 10. Documentación en inglés
+## 10. Despliegue en Cloud Run
+
+```bash
+gcloud run deploy renaper-mock \
+  --source . \
+  --region us-central1 \
+  --allow-unauthenticated \
+  --max-instances=1 \
+  --set-env-vars MOCK_USER=mock_user,MOCK_PASS=mock_pass
+```
+
+El servicio en producción está limitado a **una instancia como máximo** (`maxScale: 1`), para controlar costos en este mock de demostración.
+
+```bash
+gcloud run services update renaper-mock --region=us-central1 --max-instances=1
+```
+
+---
+
+## 11. Documentación en inglés
 
 Referencia técnica breve: [README.md](README.md).
