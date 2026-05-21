@@ -1,0 +1,401 @@
+{
+  "info": {
+    "_postman_id": "renaper-mock-demo",
+    "name": "RENAPER Mock",
+    "description": "Demo collection for the RENAPER mock on Google Cloud Run.\n\n**Base URL:** `https://renaper-mock-569660039899.us-central1.run.app`\n\n**Important:** Set collection variables `usuario` and `clave` to match the `MOCK_USER` and `MOCK_PASS` env vars configured on Cloud Run (defaults in this file are `mock_user` / `mock_pass` for local dev only).\n\nSynthetic patients: DNI `99000000`–`99000999`. Trigger DNIs `99001000`–`99001003` return specific errors.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://renaper-mock-569660039899.us-central1.run.app"
+    },
+    {
+      "key": "usuario",
+      "value": "mock_user"
+    },
+    {
+      "key": "clave",
+      "value": "mock_pass"
+    }
+  ],
+  "item": [
+    {
+      "name": "Health",
+      "item": [
+        {
+          "name": "Health check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/health",
+              "host": ["{{baseUrl}}"],
+              "path": ["health"]
+            },
+            "description": "Cloud Run liveness endpoint."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Search — success",
+      "item": [
+        {
+          "name": "Person found (99000000, F)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json; charset=utf-8"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/renaper/obtener?usuario={{usuario}}&clave={{clave}}&nrodoc=99000000&sexo=F",
+              "host": ["{{baseUrl}}"],
+              "path": ["renaper", "obtener"],
+              "query": [
+                {"key": "usuario", "value": "{{usuario}}"},
+                {"key": "clave", "value": "{{clave}}"},
+                {"key": "nrodoc", "value": "99000000"},
+                {"key": "sexo", "value": "F"}
+              ]
+            },
+            "description": "Returns JSON with nroDocumento, apellido, nombre, sexo, fechanacimiento."
+          },
+          "response": []
+        },
+        {
+          "name": "Person found with sexo X (99000006)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json; charset=utf-8"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/renaper/obtener?usuario={{usuario}}&clave={{clave}}&nrodoc=99000006&sexo=X",
+              "host": ["{{baseUrl}}"],
+              "path": ["renaper", "obtener"],
+              "query": [
+                {"key": "usuario", "value": "{{usuario}}"},
+                {"key": "clave", "value": "{{clave}}"},
+                {"key": "nrodoc", "value": "99000006"},
+                {"key": "sexo", "value": "X"}
+              ]
+            },
+            "description": "Example patient with sexo X (~1/7 of synthetic records)."
+          },
+          "response": []
+        },
+        {
+          "name": "Person found (99000123, M)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json; charset=utf-8"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/renaper/obtener?usuario={{usuario}}&clave={{clave}}&nrodoc=99000123&sexo=M",
+              "host": ["{{baseUrl}}"],
+              "path": ["renaper", "obtener"],
+              "query": [
+                {"key": "usuario", "value": "{{usuario}}"},
+                {"key": "clave", "value": "{{clave}}"},
+                {"key": "nrodoc", "value": "99000123"},
+                {"key": "sexo", "value": "M"}
+              ]
+            },
+            "description": "Another sample DNI in the synthetic range."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Search — errors",
+      "item": [
+        {
+          "name": "REGISTRO_NO_ENCONTRADO",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json; charset=utf-8"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/renaper/obtener?usuario={{usuario}}&clave={{clave}}&nrodoc=12345678&sexo=M",
+              "host": ["{{baseUrl}}"],
+              "path": ["renaper", "obtener"],
+              "query": [
+                {"key": "usuario", "value": "{{usuario}}"},
+                {"key": "clave", "value": "{{clave}}"},
+                {"key": "nrodoc", "value": "12345678"},
+                {"key": "sexo", "value": "M"}
+              ]
+            },
+            "description": "DNI outside synthetic range."
+          },
+          "response": []
+        },
+        {
+          "name": "ERROR_AUTENTICACION",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json; charset=utf-8"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/renaper/obtener?usuario={{usuario}}&clave=wrong&nrodoc=99000000&sexo=F",
+              "host": ["{{baseUrl}}"],
+              "path": ["renaper", "obtener"],
+              "query": [
+                {"key": "usuario", "value": "{{usuario}}"},
+                {"key": "clave", "value": "wrong"},
+                {"key": "nrodoc", "value": "99000000"},
+                {"key": "sexo", "value": "F"}
+              ]
+            },
+            "description": "Invalid clave."
+          },
+          "response": []
+        },
+        {
+          "name": "ERROR_DATOS — missing nrodoc",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json; charset=utf-8"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/renaper/obtener?usuario={{usuario}}&clave={{clave}}&sexo=M",
+              "host": ["{{baseUrl}}"],
+              "path": ["renaper", "obtener"],
+              "query": [
+                {"key": "usuario", "value": "{{usuario}}"},
+                {"key": "clave", "value": "{{clave}}"},
+                {"key": "sexo", "value": "M"}
+              ]
+            },
+            "description": "Missing required nrodoc."
+          },
+          "response": []
+        },
+        {
+          "name": "ERROR_DATOS — missing sexo",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json; charset=utf-8"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/renaper/obtener?usuario={{usuario}}&clave={{clave}}&nrodoc=99000000",
+              "host": ["{{baseUrl}}"],
+              "path": ["renaper", "obtener"],
+              "query": [
+                {"key": "usuario", "value": "{{usuario}}"},
+                {"key": "clave", "value": "{{clave}}"},
+                {"key": "nrodoc", "value": "99000000"}
+              ]
+            },
+            "description": "Missing required sexo."
+          },
+          "response": []
+        },
+        {
+          "name": "ERROR_DATOS — invalid nrodoc",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json; charset=utf-8"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/renaper/obtener?usuario={{usuario}}&clave={{clave}}&nrodoc=abc&sexo=F",
+              "host": ["{{baseUrl}}"],
+              "path": ["renaper", "obtener"],
+              "query": [
+                {"key": "usuario", "value": "{{usuario}}"},
+                {"key": "clave", "value": "{{clave}}"},
+                {"key": "nrodoc", "value": "abc"},
+                {"key": "sexo", "value": "F"}
+              ]
+            },
+            "description": "Non-numeric nrodoc."
+          },
+          "response": []
+        },
+        {
+          "name": "ERROR_DATOS — invalid sexo",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json; charset=utf-8"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/renaper/obtener?usuario={{usuario}}&clave={{clave}}&nrodoc=99000000&sexo=Z",
+              "host": ["{{baseUrl}}"],
+              "path": ["renaper", "obtener"],
+              "query": [
+                {"key": "usuario", "value": "{{usuario}}"},
+                {"key": "clave", "value": "{{clave}}"},
+                {"key": "nrodoc", "value": "99000000"},
+                {"key": "sexo", "value": "Z"}
+              ]
+            },
+            "description": "sexo must be F, M, or X."
+          },
+          "response": []
+        },
+        {
+          "name": "ERROR_DATOS — sexo mismatch",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json; charset=utf-8"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/renaper/obtener?usuario={{usuario}}&clave={{clave}}&nrodoc=99000000&sexo=M",
+              "host": ["{{baseUrl}}"],
+              "path": ["renaper", "obtener"],
+              "query": [
+                {"key": "usuario", "value": "{{usuario}}"},
+                {"key": "clave", "value": "{{clave}}"},
+                {"key": "nrodoc", "value": "99000000"},
+                {"key": "sexo", "value": "M"}
+              ]
+            },
+            "description": "99000000 is stored as F; sending M returns ERROR_DATOS."
+          },
+          "response": []
+        },
+        {
+          "name": "NO_TIENE_QUOTA_DISPONIBLE (99001000)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json; charset=utf-8"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/renaper/obtener?usuario={{usuario}}&clave={{clave}}&nrodoc=99001000&sexo=M",
+              "host": ["{{baseUrl}}"],
+              "path": ["renaper", "obtener"],
+              "query": [
+                {"key": "usuario", "value": "{{usuario}}"},
+                {"key": "clave", "value": "{{clave}}"},
+                {"key": "nrodoc", "value": "99001000"},
+                {"key": "sexo", "value": "M"}
+              ]
+            },
+            "description": "Trigger DNI for quota error."
+          },
+          "response": []
+        },
+        {
+          "name": "SERVICIO_RENAPER_NO_DISPONIBLE (99001001)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json; charset=utf-8"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/renaper/obtener?usuario={{usuario}}&clave={{clave}}&nrodoc=99001001&sexo=F",
+              "host": ["{{baseUrl}}"],
+              "path": ["renaper", "obtener"],
+              "query": [
+                {"key": "usuario", "value": "{{usuario}}"},
+                {"key": "clave", "value": "{{clave}}"},
+                {"key": "nrodoc", "value": "99001001"},
+                {"key": "sexo", "value": "F"}
+              ]
+            },
+            "description": "Trigger DNI for service unavailable."
+          },
+          "response": []
+        },
+        {
+          "name": "MULTIPLE_RESULTADO (99001002)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json; charset=utf-8"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/renaper/obtener?usuario={{usuario}}&clave={{clave}}&nrodoc=99001002&sexo=M",
+              "host": ["{{baseUrl}}"],
+              "path": ["renaper", "obtener"],
+              "query": [
+                {"key": "usuario", "value": "{{usuario}}"},
+                {"key": "clave", "value": "{{clave}}"},
+                {"key": "nrodoc", "value": "99001002"},
+                {"key": "sexo", "value": "M"}
+              ]
+            },
+            "description": "Trigger DNI for multiple results."
+          },
+          "response": []
+        },
+        {
+          "name": "ERROR_INESPERADO (99001003)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json; charset=utf-8"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/renaper/obtener?usuario={{usuario}}&clave={{clave}}&nrodoc=99001003&sexo=F",
+              "host": ["{{baseUrl}}"],
+              "path": ["renaper", "obtener"],
+              "query": [
+                {"key": "usuario", "value": "{{usuario}}"},
+                {"key": "clave", "value": "{{clave}}"},
+                {"key": "nrodoc", "value": "99001003"},
+                {"key": "sexo", "value": "F"}
+              ]
+            },
+            "description": "Trigger DNI for unexpected error."
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
