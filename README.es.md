@@ -227,13 +227,14 @@ gcloud run deploy renaper-mock \
   --region us-central1 \
   --allow-unauthenticated \
   --max-instances=1 \
+  --concurrency=10 \
   --set-env-vars MOCK_USER=mock_user,MOCK_PASS=mock_pass
 ```
 
-El servicio en producción está limitado a **una instancia como máximo** (`maxScale: 1`), para controlar costos en este mock de demostración.
+El servicio en producción está limitado a **una instancia como máximo** (`maxScale: 1`) y **concurrencia 10** (hasta 10 solicitudes simultáneas por instancia).
 
 ```bash
-gcloud run services update renaper-mock --region=us-central1 --max-instances=1
+gcloud run services update renaper-mock --region=us-central1 --max-instances=1 --concurrency=10
 ```
 
 ---
